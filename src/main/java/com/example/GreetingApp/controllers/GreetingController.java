@@ -3,13 +3,7 @@ package com.example.GreetingApp.controllers;
 import com.example.GreetingApp.DTO.GreetingDTO;
 import com.example.GreetingApp.service.GreetingService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/greetings")
@@ -19,8 +13,8 @@ public class GreetingController {
     private GreetingService greetingService;
 
     @GetMapping
-    public GreetingDTO getGreeting() {
-        return new GreetingDTO("Hello, World!");
+    public GreetingDTO getGreeting(@RequestParam(value = "firstName", defaultValue = "") String firstName, @RequestParam(value = "lastName", defaultValue = "" , required = false) String lastName) {
+        return new GreetingDTO("Hello, World!"+firstName+" "+lastName);
     }
 
     @PostMapping
@@ -42,4 +36,5 @@ public class GreetingController {
     public String greet() {
         return "Hello, World!";
     }
+
 }
