@@ -1,7 +1,7 @@
 package org.example.greetingapp.service;
 
-import org.example.greetingapp.dto.GreetingDTO;
-import org.example.greetingapp.dto.UserDTO;
+import org.example.greetingapp.DTO.GreetingDTO;
+import org.example.greetingapp.DTO.UserDTO;
 import java.util.List;
 
 

@@ -1,4 +1,4 @@
-package org.example.greetingapp.dto;
+package org.example.greetingapp.DTO;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

@@ -1,4 +1,4 @@
-package org.example.greetingapp.dto;
+package org.example.greetingapp.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
