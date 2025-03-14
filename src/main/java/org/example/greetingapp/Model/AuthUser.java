@@ -1,6 +1,5 @@
-package org.example.greetingapp.Model;
+package org.example.greetingapp.model;
 
-import org.example.greetingapp.DTO.AuthUserDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -8,6 +7,7 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.greetingapp.dto.AuthUserDTO;
 
 @Data
 @AllArgsConstructor
@@ -16,17 +16,17 @@ import lombok.NoArgsConstructor;
 public class AuthUser {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long UserId;
+    private Long userId;
     private String firstName;
     private String lastName;
     private String email;
     private String password;
     private String resetToken;
 
-    public AuthUser(AuthUserDTO authDTO) {
-        this.firstName = authDTO.getFirstName();
-        this.lastName = authDTO.getLastName();
-        this.email = authDTO.getEmail();
-        this.password = authDTO.getPassword();
+    public AuthUser(AuthUserDTO userDTO) {
+        this.firstName = userDTO.getFirstName();
+        this.lastName = userDTO.getLastName();
+        this.email = userDTO.getEmail();
+        this.password = userDTO.getPassword();
     }
 }

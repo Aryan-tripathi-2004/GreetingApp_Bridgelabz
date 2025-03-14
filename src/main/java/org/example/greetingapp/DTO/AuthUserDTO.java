@@ -1,4 +1,4 @@
-package org.example.greetingapp.DTO;
+package org.example.greetingapp.dto;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthUserDTO {
+
     @NotNull(message = "First name is required")
     @Size(min = 3, max = 30, message = "First name must be between 3 and 30 characters")
     @Pattern(regexp = "^[A-Z][a-zA-Z]*$", message = "First Name should always start with a capital letter and contain only letters")
@@ -30,6 +31,4 @@ public class AuthUserDTO {
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
             message = "Password must contain an uppercase letter, a lowercase letter, a number, and a special character")
     private String password;
-
-
 }
