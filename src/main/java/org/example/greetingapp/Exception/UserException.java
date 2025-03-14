@@ -1,9 +1,16 @@
-package org.example.greetingapp.Exception;
+package org.example.greetingapp.exception;
 
-public class UserException extends RuntimeException {
-    private String message;
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-    public UserException(String message) {
-        super(message);
+@AllArgsConstructor
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class UserException extends Exception {
+    private final String message;
+
+    @Override
+    public String getMessage() {
+        return message;
     }
 }

@@ -1,4 +1,4 @@
-package org.example.greetingapp.Utils;
+package org.example.greetingapp.util;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtToken {
     private static final String TOKEN_SECRET = "Lock";
+
 
     public String createToken(Long id)   {
         try {

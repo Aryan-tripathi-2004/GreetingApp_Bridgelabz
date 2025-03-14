@@ -1,10 +1,13 @@
 package org.example.greetingapp.service;
 
-import org.example.greetingapp.DTO.AuthUserDTO;
-import org.example.greetingapp.DTO.LoginDTO;
-import org.example.greetingapp.Exception.UserException;
-import org.example.greetingapp.Model.AuthUser;
-import org.example.greetingapp.Utils.JwtToken;
+import org.example.greetingapp.dto.ForgotPasswordDTO;
+import org.example.greetingapp.dto.ResetPasswordDTO;
+import org.example.greetingapp.interfaces.IAuthenticationService;
+import org.example.greetingapp.util.JwtToken;
+import org.example.greetingapp.exception.UserException;
+import org.example.greetingapp.dto.AuthUserDTO;
+import org.example.greetingapp.dto.LoginDTO;
+import org.example.greetingapp.model.AuthUser;
 import org.example.greetingapp.repository.AuthUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,22 +19,27 @@ import java.util.Optional;
 public class AuthenticationService implements IAuthenticationService {
 
     @Autowired
-    private AuthUserRepository authUserRepository;
-    @Autowired
-    private JwtToken tokenUtil;
-    @Autowired
-    private EmailSenderService emailSenderService;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    AuthUserRepository authUserRepository;
 
+    @Autowired
+    EmailSenderService emailSenderService;
 
-    public AuthUser register(AuthUserDTO userDTO) {
+    @Autowired
+    JwtToken tokenUtil;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Override
+    public AuthUser register(AuthUserDTO userDTO) throws Exception {
         AuthUser user = new AuthUser(userDTO);
         String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
         String token = tokenUtil.createToken(user.getUserId());
 
         user.setPassword(encodedPassword);
         user.setResetToken(token);
+        System.out.println(user);
+
         authUserRepository.save(user);
         emailSenderService.sendEmail(user.getEmail(),"Welcome to MyHI App", "Hello "
                 + user.getFirstName()
@@ -42,16 +50,20 @@ public class AuthenticationService implements IAuthenticationService {
                 + user.getFirstName() + "\n Last Name:  "
                 + user.getLastName() + "\n Email:  "
                 + user.getEmail() + "\n Address:  "
-                + "\n Token:  " + user.getResetToken());
+                + "\n Token:  " + token);
         return user;
     }
 
+    public Optional<AuthUser> existsByEmail(String email) {
+        Optional<AuthUser> user = Optional.ofNullable(authUserRepository.findByEmail(email));
+        return user;
+    }
 
+    @Override
     public String login(LoginDTO loginDTO) throws UserException {
-        Optional<AuthUser> user = Optional.ofNullable(authUserRepository.findByEmail(loginDTO.getEmail()));
-        String token = tokenUtil.createToken(user.get().getUserId());
+        Optional<AuthUser> user = existsByEmail(loginDTO.getEmail());
         if (user.isPresent() && passwordEncoder.matches(loginDTO.getPassword(), user.get().getPassword())) {
-            emailSenderService.sendEmail(user.get().getEmail(),"Logged in Successfully!", "Hii...."+user.get().getFirstName()+"\n\n You have successfully logged in into Greeting App!\n Token: "+token);
+            emailSenderService.sendEmail(user.get().getEmail(),"Logged in Successfully!", "Hii...."+user.get().getFirstName()+"\n\n You have successfully logged in into Greeting App!");
             return "Congratulations!! You have logged in successfully!";
         } else if (!user.isPresent()) {
             throw new UserException("Sorry! User not Found!");
@@ -59,6 +71,38 @@ public class AuthenticationService implements IAuthenticationService {
             throw new UserException("Sorry! Password is incorrect!");
         } else {
             throw new UserException("Sorry! Email or Password is incorrect!");
+        }
+    }
+
+    @Override
+    public String forgotPassword(String email, ForgotPasswordDTO forgotPasswordDTO) throws UserException {
+        AuthUser user = authUserRepository.findByEmail(email);
+        if (user != null) {
+            String newEncodedPassword = passwordEncoder.encode(forgotPasswordDTO.getPassword());
+            user.setPassword(newEncodedPassword);
+            String token = tokenUtil.createToken(user.getUserId());
+            user.setResetToken(token);
+            authUserRepository.save(user);
+            return "Password has been changed successfully!";
+        } else {
+            throw new UserException("Sorry! User not Found!");
+        }
+    }
+
+    @Override
+    public String resetPassword(String email, ResetPasswordDTO resetPasswordDTO) throws UserException {
+        AuthUser user = authUserRepository.findByEmail(email);
+        if (user != null) {
+            if (passwordEncoder.matches(resetPasswordDTO.getCurrentPassword(), user.getPassword())) {
+                String resetEncodedPassword = passwordEncoder.encode(resetPasswordDTO.getNewPassword());
+                user.setPassword(resetEncodedPassword);
+                authUserRepository.save(user);
+                return "Password reset successfully!";
+            } else {
+                throw new UserException("Sorry! Current Password is incorrect!");
+            }
+        } else {
+            throw new UserException("Sorry! User not Found with email: " + email);
         }
     }
 }

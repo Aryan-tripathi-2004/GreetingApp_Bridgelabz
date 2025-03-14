@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 public class EmailSenderService {
 
     @Autowired
-    private JavaMailSender mailSender;
+    JavaMailSender mailSender;
 
-    public void sendEmail(String toEmail, String subject, String body) {
+    public void sendEmail(String toEmail, String subject, String body){
         SimpleMailMessage simpleMailMessage=new SimpleMailMessage();
         simpleMailMessage.setFrom("trmas8525@gmail.com");
         simpleMailMessage.setTo(toEmail);
